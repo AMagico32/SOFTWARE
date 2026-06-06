@@ -135,4 +135,119 @@
                     </div>
                 </div>
 
-                <button type="button" onclick="runNeltalInferenceEngine()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-extrabold uppercase tracking-wider
+                <button type="button" onclick="runNeltalInferenceEngine()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-extrabold uppercase tracking-wider rounded-xl shadow-lg hover:shadow-emerald-500/25 transition-all">Ejecutar Motor de Diagnóstico</button>
+
+            </form>
+        </section>
+
+        <!-- Panel de Resultados -->
+        <section class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6 flex flex-col">
+            <div class="border-b border-slate-800 pb-4">
+                <h2 class="text-lg font-bold text-slate-200">Resultados del Diagnóstico</h2>
+                <p class="text-xs text-slate-400">Métricas procesadas por el motor analítico.</p>
+            </div>
+
+            <div class="space-y-4 flex-1">
+                <!-- N1 Result -->
+                <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                    <h4 class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2">Nivel 1: Flujo de Caja Libre Estimado</h4>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-mono text-slate-200">$</span>
+                        <span id="res-flujo" class="text-3xl font-black font-mono text-slate-100">---</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2">Flujo diario ajustado por oportunidad y prorrateo.</p>
+                </div>
+
+                <!-- N2 Result -->
+                <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                    <h4 class="text-[10px] font-bold text-sky-400 uppercase tracking-wider mb-2">Nivel 2: Tasa Efectiva Anual (TEA)</h4>
+                    <div class="flex items-end gap-2">
+                        <span id="res-tasa" class="text-3xl font-black font-mono text-slate-100">---</span>
+                        <span class="text-2xl font-mono text-slate-200">%</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2">Costo real de la deuda asfixiante.</p>
+                </div>
+
+                <!-- N3 Result -->
+                <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+                    <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-2">Nivel 3: Índice de Vulnerabilidad Neltal (IVN)</h4>
+                    <div class="flex items-end gap-2">
+                        <span id="res-ivn" class="text-4xl font-black font-mono text-slate-100">---</span>
+                        <span class="text-sm font-mono text-slate-400 mb-1">/ 100</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2">Riesgo compuesto operativo-macro.</p>
+                </div>
+            </div>
+
+            <div id="status-message" class="hidden rounded-lg bg-emerald-950/50 border border-emerald-900 p-3 text-xs text-emerald-400 text-center">
+                Análisis completado exitosamente.
+            </div>
+        </section>
+
+    </main>
+
+<script>
+    function runNeltalInferenceEngine() {
+        // N1 Variables
+        const I_d = parseFloat(document.getElementById('I_d').value) || 0;
+        const R_d = parseFloat(document.getElementById('R_d').value) || 0;
+        const C_o = parseFloat(document.getElementById('C_o').value) || 0;
+        const G_c = parseFloat(document.getElementById('G_c').value) || 0;
+
+        const D_a = parseFloat(document.getElementById('D_a').value) || 1;
+        const H_r = parseFloat(document.getElementById('H_r').value) || 1;
+        const A_f = parseFloat(document.getElementById('A_f').value) || 1;
+
+        // N2 Variables
+        const capital_deuda = parseFloat(document.getElementById('capital_deuda').value) || 0;
+        const tasa_nominal = parseFloat(document.getElementById('tasa_nominal').value) || 0;
+        const frecuencia_deuda = parseFloat(document.getElementById('frecuencia_deuda').value) || 1;
+
+        // N3 Macro Variables
+        const inflacion = parseFloat(document.getElementById('inflacion').value) || 0;
+        const tiie = parseFloat(document.getElementById('tiie').value) || 0;
+
+        // --- CALCULATIONS (Placeholder models based on spec requirements) ---
+
+        // Nivel 1: Flujo de Caja Real (Ajustado por costo de oportunidad y 50% prorrateo)
+        const flujo = I_d - R_d - C_o - (G_c * 0.5);
+
+        // Nivel 2: Tasa Efectiva Anual (TEA)
+        const tasa_efectiva = (Math.pow(1 + (tasa_nominal / 100) / frecuencia_deuda, frecuencia_deuda) - 1) * 100;
+
+        // Nivel 3: Índice de Vulnerabilidad Neltal (IVN)
+        // Heurística base: Menor flujo -> mayor vulnerabilidad (hasta 10 pts)
+        // Alta tasa -> mayor vulnerabilidad
+        // Inflación y TIIE aumentan vulnerabilidad
+        // Conductas adversas (A_f, etc.) aumentan riesgo
+
+        let riesgo_flujo = Math.max(0, 10 - (flujo / 500));
+        let riesgo_deuda = Math.min(40, tasa_efectiva / 5);
+        let riesgo_conducta = (A_f * 2) + ((6 - D_a) * 2) + ((6 - H_r) * 2);
+        let riesgo_macro = inflacion + tiie;
+
+        let ivn = riesgo_flujo + riesgo_deuda + riesgo_conducta + riesgo_macro;
+        ivn = Math.min(100, Math.max(0, ivn)); // Clamp between 0 and 100
+
+        // --- DOM UPDATES ---
+
+        document.getElementById('res-flujo').textContent = math.round(flujo, 2).toLocaleString();
+        document.getElementById('res-tasa').textContent = math.round(tasa_efectiva, 2).toLocaleString();
+        document.getElementById('res-ivn').textContent = math.round(ivn, 1);
+
+        const statusMsg = document.getElementById('status-message');
+        statusMsg.classList.remove('hidden');
+
+        // Add a bit of color styling depending on IVN
+        const ivnEl = document.getElementById('res-ivn');
+        if (ivn > 70) {
+            ivnEl.className = 'text-4xl font-black font-mono text-red-500';
+        } else if (ivn > 40) {
+            ivnEl.className = 'text-4xl font-black font-mono text-yellow-500';
+        } else {
+            ivnEl.className = 'text-4xl font-black font-mono text-emerald-500';
+        }
+    }
+</script>
+</body>
+</html>
