@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neltal Analytics v1.0 - Motor de Diagnóstico</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h1 class="text-2xl font-black tracking-wider text-emerald-400">NELTAL ANALYTICS</h1>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Consola Interna de Diagnóstico Micro-Macro para Analistas</p>
+        </div>
+        <div class="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-mono text-slate-300">
+            ENTORNO CORRECCIÓN: 2026_MX
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-8">
+            <div class="border-b border-slate-800 pb-4">
+                <h2 class="text-lg font-bold text-slate-200">Captura de Datos Crudos (Entrevista de Campo)</h2>
+                <p class="text-xs text-slate-400">Rellene los hallazgos narrativos y métricas operativas del micronegocio.</p>
+            </div>
+
+            <form id="diagnosticForm" class="space-y-6">
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[10px]">N1</span>
+                        Fase Básica: Caja Única y Conducta
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Ingresos Diarios Estimados ($ $I_d$ $)</label>
+                            <input type="number" id="I_d" value="2500" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-emerald-300 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Retiros Discrecionales Hogar ($ $R_d$ $)</label>
+                            <input type="number" id="R_d" value="600" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-300 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Costo Reposición del Dueño ($ $C_o$ $)</label>
+                            <input type="number" id="C_o" value="400" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-300 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Gastos Compartidos Indivisos ($ $G_c$ $)</label>
+                            <input type="number" id="G_c" value="800" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-slate-300 font-mono">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">Digitalización ($D_a$)</label>
+                            <select id="D_a" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs">
+                                <option value="1">1 - Nulo</option>
+                                <option value="2" selected>2 - Efectivo</option>
+                                <option value="3">3 - Terminal</option>
+                                <option value="4">4 - POS</option>
+                                <option value="5">5 - ERP</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">Hábito Registro ($H_r$)</label>
+                            <select id="H_r" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs">
+                                <option value="1" selected>1 - Memoria</option>
+                                <option value="2">2 - Libreta</option>
+                                <option value="3">3 - Excel</option>
+                                <option value="4">4 - App</option>
+                                <option value="5">5 - Automatizado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">Aversión Fiscal ($A_f$)</label>
+                            <select id="A_f" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs">
+                                <option value="1">1 - Dispuesto</option>
+                                <option value="2">2 - Neutro</option>
+                                <option value="3">3 - Temor</option>
+                                <option value="4" selected>4 - Resistencia</option>
+                                <option value="5">5 - Evasión Total</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t border-slate-800">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-sky-400 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 text-[10px]">N2</span>
+                        Fase Intermedia: Pasivos Financieros Extractivos
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Capital Insoluto ($ $K$ $)</label>
+                            <input type="number" id="capital_deuda" value="20000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Tasa Nominal Anual (%)</label>
+                            <input type="number" id="tasa_nominal" value="85" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-red-400 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Frecuencia Amortización</label>
+                            <select id="frecuencia_deuda" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300">
+                                <option value="360" selected>Diaria (Gota a Gota)</option>
+                                <option value="52">Semanal (Fintech/Microfinanciera)</option>
+                                <option value="12">Mensual (Banca Tradicional)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t border-slate-800">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-purple-400 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-400 text-[10px]">MACRO</span>
+                        Vector Macro Banxico (Entorno 2026)
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Inflación Subyacente INPC (%)</label>
+                            <input type="number" id="inflacion" value="5.4" step="0.1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-purple-300">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Tasa de Referencia Interbancaria (TIIE %)</label>
+                            <input type="number" id="tiie" value="10.50" step="0.01" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-purple-300">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" onclick="runNeltalInferenceEngine()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-extrabold uppercase tracking-wider
